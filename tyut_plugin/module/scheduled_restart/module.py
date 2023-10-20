@@ -50,7 +50,7 @@ instance: ScheduledRestartModule = None
 
 def __get_next_restart_time_rough(cur_time: time.struct_time) -> time.struct_time:
     for t in RESTART_TIME_LIST:
-        t2 = to_mutable_struct_time(time.localtime())
+        t2 = to_mutable_struct_time(cur_time)
         t2.tm_hour = t.tm_hour
         t2.tm_min = t.tm_min
         t2.tm_sec = t.tm_sec
@@ -64,13 +64,13 @@ def __get_next_restart_time_rough(cur_time: time.struct_time) -> time.struct_tim
 def _get_next_restart_time(cur_time: time.struct_time) -> time.struct_time:
     result = __get_next_restart_time_rough(cur_time)
     if result is None:
-        cur_time = to_mutable_struct_time(cur_time)
-        cur_time.tm_mday += 1
-        cur_time.tm_wday += 1
-        cur_time.tm_yday += 1
-        cur_time.tm_hour = cur_time.tm_min = cur_time.tm_sec = 0
-        cur_time = to_struct_time(cur_time)
-        return __get_next_restart_time_rough(cur_time)
+        cur_time_n = time.mktime(cur_time)
+        cur_time_n += 60.0 * 60 * 24
+        cur_time_2 = time.localtime(cur_time_n)
+        cur_time_2 = to_mutable_struct_time(cur_time_2)
+        cur_time_2.tm_hour = cur_time_2.tm_min = cur_time_2.tm_sec = 0
+        cur_time_2 = to_struct_time(cur_time_2)
+        return __get_next_restart_time_rough(cur_time_2)
     else:
         return result
 

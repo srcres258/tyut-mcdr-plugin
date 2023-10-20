@@ -14,6 +14,7 @@ class MutableStructTime:
         self.tm_zone: int = 0
         self.tm_year: str = ""
         self.tm_gmtoff: int = 0
+        self.tm_yday: int = 0
 
 def to_mutable_struct_time(st: time.struct_time) -> MutableStructTime:
     result = MutableStructTime()
@@ -28,6 +29,7 @@ def to_mutable_struct_time(st: time.struct_time) -> MutableStructTime:
     result.tm_zone = st.tm_zone
     result.tm_year = st.tm_year
     result.tm_gmtoff = st.tm_gmtoff
+    result.tm_yday = st.tm_yday
     return result
 
 def to_struct_time(mst: MutableStructTime) -> time.struct_time:

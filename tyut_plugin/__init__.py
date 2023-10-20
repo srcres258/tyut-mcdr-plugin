@@ -19,6 +19,7 @@ def on_load(server: PluginServerInterface, prev_module):
     module_manager.load_module_classes(constants.MODULES)
     module_manager.init_modules()
     module_manager.load_modules(server)
+    module_manager.load_command_system(server)
 
 def on_unload(server: PluginServerInterface):
     module_manager.unload_modules(server)

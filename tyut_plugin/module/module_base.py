@@ -17,6 +17,9 @@ class ModuleBase(ABC):
     def on_load(self, server: PluginServerInterface):
         self.server = server
 
+    def on_register_command(self, prefix_cmd: Literal):
+        pass
+
     def on_unload(self, server: PluginServerInterface):
         pass
 

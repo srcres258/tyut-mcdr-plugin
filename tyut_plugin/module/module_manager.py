@@ -3,6 +3,7 @@ from mcdreforged.api.all import *
 
 from tyut_plugin.api.module import *
 from tyut_plugin.api.util import *
+from tyut_plugin.api.info import *
 
 module_class_list: list[type[ModuleBase]] = []
 module_list: dict[type[ModuleBase], ModuleBase] = {}
@@ -26,6 +27,16 @@ def load_modules(server: PluginServerInterface):
         module.on_load(server)
         log.i("模块加载完毕:{0} {1}".format(module.id, module.name))
 
+def load_command_system(server: PluginServerInterface):
+    log.d("初始化命令系统...")
+    prefix_cmd = Literal(constants.PLUGIN_COMMAND_PREFIX)
+    prefix_cmd.runs(__print_help)
+    prefix_cmd.then(Literal('help').runs(__print_help))
+    for (i, module) in enumerate(module_list.values()):
+        module.on_register_command(prefix_cmd)
+    server.register_command(prefix_cmd)
+    log.d("初始化命令系统完毕")
+
 def unload_modules(server: PluginServerInterface):
     for (i, module) in enumerate(module_list.values()):
         log.i("正在卸载模块:{0} {1}".format(module.id, module.name))
@@ -42,3 +53,6 @@ def stop_modules():
 
 def get_module(t: type[ModuleBase]):
     return module_list[t]
+
+def __print_help(src: CommandSource):
+    pass # TODO

@@ -19,7 +19,6 @@ def __time_of(hour: int, min: int, sec: int) -> time.struct_time:
 
 RESTART_TIME_LIST = [
     __time_of(14, 0, 0),
-    __time_of(20, 12, 0),
     __time_of(22, 0, 0)
 ]
 

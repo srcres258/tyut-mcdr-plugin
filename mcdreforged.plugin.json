@@ -1,0 +1,19 @@
+{
+	"id": "tyut_plugin",
+	"version": "0.1.0",
+	"name": "TYUT Minecraft server plugin",
+	"description": {
+		"en_us": "A MCDR plugin designed for TYUT Minecraft server.",
+		"zh_cn": "为太原理工大学Minecraft服务器定制的MCDR插件。"
+	},
+	"author": [
+		"srcres258"
+	],
+	"link": "",
+
+	"archive_name": "tyut_plugin-v{version}",
+	"resources": [
+		"lang",
+		"LICENSE"
+	]
+}

@@ -11,8 +11,9 @@ from tyut_plugin.api.info import *
 
 NOTICE_PERIOD_TIME: float = 60 * 5 # Unit: second(s)
 NOTICE_CONTENTS: list[str] = [
-    "欢迎加入TYUT呆梨服官方QQ群：681874322",
-    "服务器维护需要高昂成本，如有条件可适当捐助以维持服务器运行，感谢您的支持"
+    "欢迎加入TYUT呆梨服官方QQ群：681874322。",
+    "服务器维护需要高昂成本，如有条件可适当捐助以维持服务器运行，感谢您的支持。",
+    "服务器将于每日14点整和22点整定时重启以保证运行流畅，请提前做好准备以避免意外情况。",
 ]
 
 class ServerNoticeModule(ModuleBase):

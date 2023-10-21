@@ -1,6 +1,6 @@
 {
 	"id": "tyut_plugin",
-	"version": "0.1.2",
+	"version": "0.1.4",
 	"name": "TYUT Minecraft server plugin",
 	"description": {
 		"en_us": "A MCDR plugin designed for TYUT Minecraft server.",

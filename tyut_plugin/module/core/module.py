@@ -9,7 +9,7 @@ WELCOME_MESSAGE = \
 §e欢迎来到 §bTYUT 呆梨 Minecraft 服务器
 §e官方QQ群：§c681874322
 §e命令用法请输入 §a/help §e查阅
-§7呆梨服插件 版本：v0.1.2  by src_resources
+§7呆梨服插件 版本：v0.1.3  by src_resources
 §9§nhttps://github.com/srcres258/tyut-mcdr-plugin§r
 §f-------------------------------------------§r"""
 

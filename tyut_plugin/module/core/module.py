@@ -22,7 +22,7 @@ def _on_player_left(server: PluginServerInterface, player: str):
 
 class CoreModule(ModuleBase):
     def __init__(self):
-        super().__init__("core", name="核心", msg_tag="tyut服务器", msg_tag_color=format.Color.WHITE)
+        super().__init__("core", name="核心", msg_tag="呆梨娘", msg_tag_color=format.Color.WHITE)
 
     def on_init(self):
         super().on_init()

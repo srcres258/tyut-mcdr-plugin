@@ -7,7 +7,7 @@ from tyut_plugin.module.dustman.module import DustmanModule
 from tyut_plugin.module.maintenance_notice.module import MaintenanceNoticeModule
 
 PLUGIN_ID = 'tyut_plugin'
-PLUGIN_VERSION = '0.1.4'
+PLUGIN_VERSION = '0.1.5'
 PLUGIN_COMMAND_PREFIX = '!!tyut'
 
 MODULES = [CoreModule, TimeAnnouncementModule, MaintenanceNoticeModule]

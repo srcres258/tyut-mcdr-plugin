@@ -10,4 +10,4 @@ PLUGIN_ID = 'tyut_plugin'
 PLUGIN_VERSION = '0.1.4'
 PLUGIN_COMMAND_PREFIX = '!!tyut'
 
-MODULES = [CoreModule, TimeAnnouncementModule, ScheduledRestartModule, MaintenanceNoticeModule]
+MODULES = [CoreModule, TimeAnnouncementModule, MaintenanceNoticeModule]

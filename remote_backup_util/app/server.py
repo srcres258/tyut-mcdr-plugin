@@ -3,12 +3,18 @@ import pickledb
 import os
 import tqdm
 
-from remote_backup_util.api import *
+from remote_backup_util import host, constants, util, message, host_impl
 
 FILE_DIR = os.path.join(os.getcwd(), 'server_data')
 
-file_content_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_content_hash.db'), True)
-file_path_name_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_path_name_hash_db.db'), True)
+file_content_hash_db = None
+file_path_name_hash_db = None
+
+try:
+    file_content_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_content_hash.db'), True)
+    file_path_name_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_path_name_hash_db.db'), True)
+except:
+    pass
 
 def get_file_content_hash_raw(path: str) -> str:
     if os.access(path, os.R_OK):
@@ -32,7 +38,7 @@ def get_push_file_target_path(push_file_name: str) -> str:
     push_file_name_sha1_str = util.calc_str_utf8_sha1(push_file_name)
     return os.path.join(FILE_DIR, push_file_name_sha1_str[:2], push_file_name_sha1_str)
 
-def __do_messenging(host: host_impl.SimpleServerHost):
+def __do_messenging(host: host.Host):
     push_file_name = ""
     push_total_size = 0
     push_remaining_size = 0

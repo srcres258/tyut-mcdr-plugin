@@ -2,7 +2,7 @@
 import os
 import tqdm
 
-from remote_backup_util.api import *
+from remote_backup_util import messenger, message, host_impl, util, constants
 
 FILE_DIR = os.path.join(os.getcwd(), 'client_data')
 BYTES_PER_TIME = 1024 * 1024 * 2 # 2 MB per time by default, can be adjusted on your own. Don't set it to a big number because it depends on Python's runtime memory.

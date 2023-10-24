@@ -161,3 +161,7 @@ cython_debug/
 
 # VSCode
 /.vscode
+
+# Test data
+/client_data
+/server_data

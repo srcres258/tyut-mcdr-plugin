@@ -2,6 +2,7 @@
 import pickledb
 import os
 import tqdm
+import json
 
 from remote_backup_util import host, constants, util, message, host_impl
 
@@ -11,8 +12,8 @@ file_content_hash_db = None
 file_path_name_hash_db = None
 
 try:
-    file_content_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_content_hash.db'), True)
-    file_path_name_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_path_name_hash_db.db'), True)
+    file_content_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_content_hash.db'), False)
+    file_path_name_hash_db = pickledb.load(os.path.join(FILE_DIR, 'file_path_name_hash_db.db'), False)
 except:
     pass
 
@@ -37,6 +38,10 @@ def get_file_content_hash(path: str) -> str:
 def get_push_file_target_path(push_file_name: str) -> str:
     push_file_name_sha1_str = util.calc_str_utf8_sha1(push_file_name)
     return os.path.join(FILE_DIR, push_file_name_sha1_str[:2], push_file_name_sha1_str)
+
+# Synchonized implementation of pickledb.PickleDB.dump to avoid threading exceptions
+def dump_db_sync(db: pickledb.PickleDB):
+    json.dump(db.db, open(db.loco, 'wt'))
 
 def __do_messenging(host: host.Host):
     push_file_name = ""
@@ -91,6 +96,7 @@ def __do_messenging(host: host.Host):
                 host.messenger.send_message(message.Message("respond", host.next_msg_id(), msg.command, tuple()))
             case "bye":
                 host.messenger.send_message(message.Message("respond", host.next_msg_id(), msg.command, tuple()))
+                dump_db_sync(file_path_name_hash_db)
                 break
 
 def main():

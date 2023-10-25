@@ -94,6 +94,8 @@ def __do_messenging(host: host.Host):
                 push_file = None
                 push_pbar = None
                 host.messenger.send_message(message.Message("respond", host.next_msg_id(), msg.command, tuple()))
+                dump_db_sync(file_content_hash_db)
+                dump_db_sync(file_path_name_hash_db)
             case "bye":
                 host.messenger.send_message(message.Message("respond", host.next_msg_id(), msg.command, tuple()))
                 dump_db_sync(file_content_hash_db)

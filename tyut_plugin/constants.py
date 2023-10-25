@@ -8,7 +8,7 @@ from tyut_plugin.module.maintenance_notice.module import MaintenanceNoticeModule
 from tyut_plugin.module.backup.module import BackupModule
 
 PLUGIN_ID = 'tyut_plugin'
-PLUGIN_VERSION = '0.1.5'
+PLUGIN_VERSION = '0.1.6'
 PLUGIN_COMMAND_PREFIX = '!!tyut'
 
 MODULES = [CoreModule, TimeAnnouncementModule, MaintenanceNoticeModule, BackupModule]

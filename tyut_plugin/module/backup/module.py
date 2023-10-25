@@ -137,7 +137,7 @@ class BackupProgressNotifierThread(threading.Thread):
 
 class BackupClientHost(host.ClientHost):
     def __init__(self, module: BackupModule, notifier_thread: BackupProgressNotifierThread):
-        super().__init__("localhost", 14285)
+        super().__init__("114.55.177.176", 14285)
         self.module = module
         self.notifier_thread = notifier_thread
 
@@ -146,61 +146,68 @@ class BackupClientHost(host.ClientHost):
 
         self.module.server.execute("save-off")
         self.module.server.execute("save-all flush")
-        
-        # for root, dirs, files in os.walk(FILE_DIR):
-        #     for (i, file) in enumerate(files):
-        #         dirfile = os.path.join(root, file)
-        #         dirfile_size = os.stat(dirfile).st_size
-        #         print("Sending file: {} ({}/{})".format(dirfile, i, len(files)))
-        #         content = b''
-        #         with open(dirfile, 'rb') as f:
-        #             content = f.read()
-        #         content_hash = util.calc_sha1(content)
-        #         print("Content hash:", content_hash)
-        #         hash_msg = send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
-        #         server_content_hash = hash_msg.command_arguments[0]
-        #         print("Content hash from the server:", server_content_hash)
-        #         if content_hash == server_content_hash:
-        #             print("Hash are the same, skipping for this file.", content_hash)
-        #         else:
-        #             print("Hash are different, sending this file.")
-        #             send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
-        #             send_file_push_data(host, content)
-        #             send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_end", tuple()))
-        #             print("Finished sending.")
-        # send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "bye", tuple()))
 
-        dirfiles: list[str] = []
-        for root, dirs, files in os.walk(FILE_DIR):
-            for (i, file) in enumerate(files):
-                dirfiles.append(os.path.join(root, file))
-        self.notifier_thread.backup_progress_maximum = len(dirfiles)
-        for (i, dirfile) in enumerate(dirfiles):
-            dirfile_size = os.stat(dirfile).st_size
-            log.i("Sending file: {} ({}/{})".format(dirfile, i, len(dirfiles)))
-            self.notifier_thread.backup_progress_value = i
-            content = b''
-            if ".lock" in dirfile or ".db" in dirfile:
-                log.i("Skipping for this file as it cannot be sent.")
-                continue
-            with open(dirfile, 'rb') as f:
-                content = f.read()
-            content_hash = util.calc_sha1(content)
-            log.i("Content hash: " + content_hash)
-            hash_msg = send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
-            server_content_hash = hash_msg.command_arguments[0]
-            log.i("Content hash from the server: " + server_content_hash)
-            if content_hash == server_content_hash:
-                log.i("Hash are the same, skipping for this file.")
-            else:
-                log.i("Hash are different, sending this file.")
-                send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
-                send_file_push_data(self, content)
-                send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_end", tuple()))
-                log.i("Finished sending.")
-        send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "bye", tuple()))
+        try:
+            # for root, dirs, files in os.walk(FILE_DIR):
+            #     for (i, file) in enumerate(files):
+            #         dirfile = os.path.join(root, file)
+            #         dirfile_size = os.stat(dirfile).st_size
+            #         print("Sending file: {} ({}/{})".format(dirfile, i, len(files)))
+            #         content = b''
+            #         with open(dirfile, 'rb') as f:
+            #             content = f.read()
+            #         content_hash = util.calc_sha1(content)
+            #         print("Content hash:", content_hash)
+            #         hash_msg = send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
+            #         server_content_hash = hash_msg.command_arguments[0]
+            #         print("Content hash from the server:", server_content_hash)
+            #         if content_hash == server_content_hash:
+            #             print("Hash are the same, skipping for this file.", content_hash)
+            #         else:
+            #             print("Hash are different, sending this file.")
+            #             send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
+            #             send_file_push_data(host, content)
+            #             send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_end", tuple()))
+            #             print("Finished sending.")
+            # send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "bye", tuple()))
+
+            dirfiles: list[str] = []
+            for root, dirs, files in os.walk(FILE_DIR):
+                for (i, file) in enumerate(files):
+                    dirfiles.append(os.path.join(root, file))
+            self.notifier_thread.backup_progress_maximum = len(dirfiles)
+            for (i, dirfile) in enumerate(dirfiles):
+                dirfile_size = os.stat(dirfile).st_size
+                log.i("Sending file: {} ({}/{})".format(dirfile, i, len(dirfiles)))
+                self.notifier_thread.backup_progress_value = i
+                content = b''
+                if ".lock" in dirfile or ".db" in dirfile:
+                    log.i("Skipping for this file as it cannot be sent.")
+                    continue
+                with open(dirfile, 'rb') as f:
+                    content = f.read()
+                content_hash = util.calc_sha1(content)
+                log.i("Content hash: " + content_hash)
+                hash_msg = send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
+                server_content_hash = hash_msg.command_arguments[0]
+                log.i("Content hash from the server: " + server_content_hash)
+                if content_hash == server_content_hash:
+                    log.i("Hash are the same, skipping for this file.")
+                else:
+                    log.i("Hash are different, sending this file.")
+                    send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
+                    send_file_push_data(self, content)
+                    send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_end", tuple()))
+                    log.i("Finished sending.")
+            send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "bye", tuple()))
+        except Exception as ex:
+            msg = format.color_code[format.Color.RED]
+            msg += "存档备份失败，请联系腐竹以寻求帮助: "
+            msg += format.reset_code
+            msg += str(ex)
+            self.module.broadcast_module_message(msg)
+
         self.notifier_thread.running = False
-
         self.module.server.execute("save-on")
 
         backup_end_time = time.time()
@@ -232,10 +239,13 @@ class BackupTimerThread(threading.Thread):
         notifier_thread = BackupProgressNotifierThread(self.module)
         self.module.broadcast_module_message("正在连接到远程备份服务器...")
         host = BackupClientHost(self.module, notifier_thread)
-        host.init_messenger()
-        self.module.broadcast_module_message("已连接到备份服务器，即将开始备份，服务器可能产生些许卡顿，请耐心等待备份完成。")
-        host.start_messenger()
-        notifier_thread.start()
+        try:
+            host.init_messenger()
+            self.module.broadcast_module_message("已连接到备份服务器，即将开始备份，服务器可能产生些许卡顿，请耐心等待备份完成。")
+            host.start_messenger()
+            notifier_thread.start()
+        except ConnectionRefusedError as error:
+            self.module.broadcast_module_message("无法连接到远程服务器，备份失败: " + str(error))
 
     def run(self):
         while self.running:

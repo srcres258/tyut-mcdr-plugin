@@ -96,6 +96,7 @@ def __do_messenging(host: host.Host):
                 host.messenger.send_message(message.Message("respond", host.next_msg_id(), msg.command, tuple()))
             case "bye":
                 host.messenger.send_message(message.Message("respond", host.next_msg_id(), msg.command, tuple()))
+                dump_db_sync(file_content_hash_db)
                 dump_db_sync(file_path_name_hash_db)
                 break
 

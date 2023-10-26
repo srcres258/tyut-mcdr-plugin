@@ -206,6 +206,8 @@ class BackupClientHost(host.ClientHost):
             msg += format.reset_code
             msg += str(ex)
             self.module.broadcast_module_message(msg)
+        finally:
+            self.clean_up_messenger()
 
         self.notifier_thread.running = False
         self.module.server.execute("save-on")

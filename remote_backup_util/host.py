@@ -22,6 +22,10 @@ class Host(abc.ABC):
     def do_messenging(self):
         pass
 
+    @abc.abstractmethod
+    def clean_up_messenger(self):
+        pass
+
     def start_messenger(self):
         if self.host_thread:
             self.host_thread.start()
@@ -62,6 +66,13 @@ class ServerHost(Host):
     def init_messenger(self):
         self.messenger.socket_accept()
 
+    def clean_up_messenger(self):
+        self.messenger.target_socket.close()
+        self.messenger.comm_socket.close()
+
 class ClientHost(Host):
     def init_messenger(self):
         self.messenger.socket_bind()
+
+    def clean_up_messenger(self):
+        self.messenger.target_socket.close()

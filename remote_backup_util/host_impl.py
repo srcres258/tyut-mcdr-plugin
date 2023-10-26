@@ -7,7 +7,10 @@ class SimpleServerHost(host.ServerHost):
         self.messenging_callback = messenging_callback
 
     def do_messenging(self):
-        self.messenging_callback(self)
+        try:
+            self.messenging_callback(self)
+        finally:
+            self.clean_up_messenger()
 
 class SimpleClientHost(host.ClientHost):
     def __init__(self, messenging_callback, ip: str = "localhost", port: int = 14285, async_exec: bool = True):
@@ -15,4 +18,7 @@ class SimpleClientHost(host.ClientHost):
         self.messenging_callback = messenging_callback
 
     def do_messenging(self):
-        self.messenging_callback(self)
+        try:
+            self.messenging_callback(self)
+        finally:
+            self.clean_up_messenger()

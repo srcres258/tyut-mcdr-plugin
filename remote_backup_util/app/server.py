@@ -108,6 +108,7 @@ def __do_messenging(host: host.Host):
                     dump_db_sync(file_path_name_hash_db)
                     break
     finally:
+        host.clean_up_messenger()
         __doing_messenging = False
 
 def main():

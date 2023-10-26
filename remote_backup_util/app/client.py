@@ -1,6 +1,7 @@
 
 import os
 import tqdm
+import time
 
 from remote_backup_util import messenger, message, host_impl, util, constants
 
@@ -35,36 +36,46 @@ def send_file_push_data(host: host_impl.SimpleServerHost, content: bytes):
         remaining -= BYTES_PER_TIME
     pbar.close()
 
+__doing_messenging = False
+
 def __do_messenging(host: host_impl.SimpleServerHost):
-    for root, dirs, files in os.walk(FILE_DIR):
-        for (i, file) in enumerate(files):
-            dirfile = os.path.join(root, file)
-            dirfile_size = os.stat(dirfile).st_size
-            print("Sending file: {} ({}/{})".format(dirfile, i, len(files)))
-            content = b''
-            with open(dirfile, 'rb') as f:
-                content = f.read()
-            content_hash = util.calc_sha1(content)
-            print("Content hash:", content_hash)
-            hash_msg = send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
-            server_content_hash = hash_msg.command_arguments[0]
-            print("Content hash from the server:", server_content_hash)
-            if content_hash == server_content_hash:
-                print("Hash are the same, skipping for this file.", content_hash)
-            else:
-                print("Hash are different, sending this file.")
-                send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
-                send_file_push_data(host, content)
-                send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_end", tuple()))
-                print("Finished sending.")
-    send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "bye", tuple()))
+    global __doing_messenging
+    try:
+        __doing_messenging = True
+        for root, dirs, files in os.walk(FILE_DIR):
+            for (i, file) in enumerate(files):
+                dirfile = os.path.join(root, file)
+                dirfile_size = os.stat(dirfile).st_size
+                print("Sending file: {} ({}/{})".format(dirfile, i, len(files)))
+                content = b''
+                with open(dirfile, 'rb') as f:
+                    content = f.read()
+                content_hash = util.calc_sha1(content)
+                print("Content hash:", content_hash)
+                hash_msg = send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
+                server_content_hash = hash_msg.command_arguments[0]
+                print("Content hash from the server:", server_content_hash)
+                if content_hash == server_content_hash:
+                    print("Hash are the same, skipping for this file.", content_hash)
+                else:
+                    print("Hash are different, sending this file.")
+                    send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
+                    send_file_push_data(host, content)
+                    send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "file_push_end", tuple()))
+                    print("Finished sending.")
+        send_and_recv_message(host.messenger, message.Message("request", host.next_msg_id(), "bye", tuple()))
+    finally:
+        __doing_messenging = False
 
 def main():
-    if not os.path.exists(FILE_DIR):
-        os.makedirs(FILE_DIR)
-    host = host_impl.SimpleClientHost(__do_messenging, "localhost", 14285)
-    host.init_messenger()
-    host.start_messenger()
+    if __doing_messenging:
+        time.sleep(1)
+    else:
+        if not os.path.exists(FILE_DIR):
+            os.makedirs(FILE_DIR)
+        host = host_impl.SimpleClientHost(__do_messenging, "localhost", 14285)
+        host.init_messenger()
+        host.start_messenger()
 
 if __name__ == "__main__":
     main()

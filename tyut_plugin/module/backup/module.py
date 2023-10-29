@@ -177,13 +177,16 @@ class BackupClientHost(host.ClientHost):
                     dirfiles.append(os.path.join(root, file))
             self.notifier_thread.backup_progress_maximum = len(dirfiles)
             for (i, dirfile) in enumerate(dirfiles):
+                if ".lock" in dirfile or ".db" in dirfile:
+                    log.i("Skipping for this file as it cannot be sent.")
+                    continue
+                if not os.access(dirfile, os.R_OK):
+                    log.i("Skipping for this file as it is not existing or readable yet.")
+                    continue
                 dirfile_size = os.stat(dirfile).st_size
                 log.i("Sending file: {} ({}/{})".format(dirfile, i, len(dirfiles)))
                 self.notifier_thread.backup_progress_value = i
                 content = b''
-                if ".lock" in dirfile or ".db" in dirfile:
-                    log.i("Skipping for this file as it cannot be sent.")
-                    continue
                 with open(dirfile, 'rb') as f:
                     content = f.read()
                 content_hash = util.calc_sha1(content)

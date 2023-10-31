@@ -183,25 +183,29 @@ class BackupClientHost(host.ClientHost):
                 if not os.access(dirfile, os.R_OK):
                     log.i("Skipping for this file as it is not existing or readable yet.")
                     continue
-                dirfile_size = os.stat(dirfile).st_size
-                log.i("Sending file: {} ({}/{})".format(dirfile, i, len(dirfiles)))
-                self.notifier_thread.backup_progress_value = i
-                content = b''
-                with open(dirfile, 'rb') as f:
-                    content = f.read()
-                content_hash = util.calc_sha1(content)
-                log.i("Content hash: " + content_hash)
-                hash_msg = send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
-                server_content_hash = hash_msg.command_arguments[0]
-                log.i("Content hash from the server: " + server_content_hash)
-                if content_hash == server_content_hash:
-                    log.i("Hash are the same, skipping for this file.")
-                else:
-                    log.i("Hash are different, sending this file.")
-                    send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
-                    send_file_push_data(self, content)
-                    send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_end", tuple()))
-                    log.i("Finished sending.")
+                try:
+                    dirfile_size = os.stat(dirfile).st_size
+                    log.i("Sending file: {} ({}/{})".format(dirfile, i, len(dirfiles)))
+                    self.notifier_thread.backup_progress_value = i
+                    content = b''
+                    with open(dirfile, 'rb') as f:
+                        content = f.read()
+                    content_hash = util.calc_sha1(content)
+                    log.i("Content hash: " + content_hash)
+                    hash_msg = send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "get_file_content_sha1", (dirfile[len(FILE_DIR):],)))
+                    server_content_hash = hash_msg.command_arguments[0]
+                    log.i("Content hash from the server: " + server_content_hash)
+                    if content_hash == server_content_hash:
+                        log.i("Hash are the same, skipping for this file.")
+                    else:
+                        log.i("Hash are different, sending this file.")
+                        send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_begin", (dirfile[len(FILE_DIR):], dirfile_size, BYTES_PER_TIME)))
+                        send_file_push_data(self, content)
+                        send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "file_push_end", tuple()))
+                        log.i("Finished sending.")
+                except:
+                    log.i("Failed to send file: {}, skipping.".format(dirfile))
+                    continue
             send_and_recv_message(self.messenger, message.Message("request", self.next_msg_id(), "bye", tuple()))
         except Exception as ex:
             msg = format.color_code[format.Color.RED]

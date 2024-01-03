@@ -255,6 +255,8 @@ class BackupTimerThread(threading.Thread):
             notifier_thread.start()
         except ConnectionRefusedError as error:
             self.module.broadcast_module_message("无法连接到远程服务器，备份失败: " + str(error))
+        except:
+            self.module.broadcast_module_message("无法连接到远程服务器，备份失败")
 
     def run(self):
         while self.running:
